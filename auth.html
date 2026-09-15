@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#2563eb">
+<title>TutoGenius - Welcome & Authentication</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+  *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            -webkit-tap-highlight-color: transparent !important;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        a, span, p, h1, h2, h3, h4, h5, h6, div, button, input, select {
+            -webkit-tap-highlight-color: transparent !important;
+            text-decoration: none;
+        }
+
+        input, select {
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+html,body{
+  width:100%;
+  height:100%;
+  background:#f8fafc;
+}
+body{
+  display:flex;
+  justify-content:center;
+  overflow:hidden;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+input,select{-webkit-user-select:text;user-select:text}
+
+:root{
+  --primary:#2563eb;
+  --primary-dark:#1e3a8a;
+  --primary-light:#eff6ff;
+  --text:#0f172a;
+  --sub:#64748b;
+  --bg:#ffffff;
+  --input-bg:#f8fafc;
+  --border:#e2e8f0;
+}
+
+/* ================= PRELOADER / FIRST LOADING SCREEN ================= */
+#appPreloader {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: 500px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.45s ease;
+}
+
+#appPreloader.preloader-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.preloader-logo-wrap {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preloader-logo-wrap img {
+  width: 70px;
+  height: 70px;
+  border-radius: 18px;
+  object-fit: cover;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+  z-index: 2;
+  animation: pulseLogo 2s infinite ease-in-out;
+}
+
+.preloader-spinner-ring {
+  position: absolute;
+  inset: 0;
+  border: 3.5px solid #e2e8f0;
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spinRing 1.1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.preloader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.preloader-title {
+  font-size: 20px;
+  font-weight: 850;
+  color: var(--text);
+  letter-spacing: -0.5px;
+}
+
+.preloader-subtext {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sub);
+}
+
+.preloader-progress-bar {
+  width: 130px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 6px;
+}
+
+.preloader-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 40%;
+  background: var(--primary);
+  border-radius: 999px;
+  animation: progressIndeterminate 1.4s infinite ease-in-out;
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+}
+
+@keyframes progressIndeterminate {
+  0% { left: -40%; width: 40%; }
+  50% { left: 30%; width: 60%; }
+  100% { left: 100%; width: 40%; }
+}
+
+/* APP WRAPPER */
+.app-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 35px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* TOP BAR */
+.top-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 10;
+}
+.lang-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: rgba(241, 245, 249, 0.85);
+  backdrop-filter: blur(4px);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+
+/* ONBOARDING SLIDER */
+.slider-container {
+  flex: 1;
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.slider-container::-webkit-scrollbar {
+  display: none;
+}
+.slide {
+  flex: 0 0 100%;
+  width: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px 20px;
+  text-align: center;
+}
+.illustration-box {
+  width: 100%;
+  max-width: 280px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.slide-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.35;
+  letter-spacing: -0.3px;
+  max-width: 320px;
+}
+.slide-subtitle {
+  font-size: 13px;
+  color: var(--sub);
+  margin-top: 8px;
+  line-height: 1.5;
+  max-width: 290px;
+}
+
+/* BOTTOM CONTROLS */
+.bottom-panel {
+  padding: 16px 24px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #ffffff;
+}
+.dots-indicator {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  transition: all 0.3s ease;
+}
+.dot.active {
+  width: 24px;
+  border-radius: 10px;
+  background: var(--primary);
+}
+.btn-main {
+  width: 100%;
+  height: 52px;
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: 26px;
+  font-size: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(37,99,235,0.25);
+  transition: transform .1s ease, background-color .2s ease;
+}
+.btn-main:active {
+  transform: scale(0.98);
+  background: var(--primary-dark);
+}
+
+/* MODAL BOTTOM SHEET */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  width:100%;
+  max-width:460px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(15,23,42,.6);
+  backdrop-filter:blur(6px);
+  z-index:5000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+}
+.modal-card{
+  width:100%;
+  background:#fff;
+  border-radius:28px 28px 0 0;
+  padding:16px 24px calc(24px + env(safe-area-inset-bottom));
+  max-height:88vh;
+  overflow-y:auto;
+  animation:modalSlideUp .3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes modalSlideUp{
+  from{transform:translateY(100%)}
+  to{transform:translateY(0)}
+}
+.modal-bar{
+  width:38px;
+  height:4px;
+  background:#e2e8f0;
+  border-radius:4px;
+  margin:0 auto 16px;
+}
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+.modal-title{
+  font-size:20px;
+  font-weight:800;
+  color:var(--text);
+}
+.close-circle{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#f1f5f9;
+  border:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#64748b;
+}
+.close-circle:active{
+  transform:scale(0.92);
+}
+
+/* FORM STYLES */
+.input-group{
+  position:relative;
+  margin-bottom:14px;
+}
+.input-icon-left{
+  position:absolute;
+  left:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#94a3b8;
+  width:18px;
+  height:18px;
+  pointer-events:none;
+}
+.input-icon-right{
+  position:absolute;
+  right:16px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#94a3b8;
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
+.form-input{
+  width:100%;
+  height:50px;
+  background:var(--input-bg);
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:0 46px;
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  outline:none;
+  transition:all 0.2s ease;
+}
+.form-input:focus{
+  border-color:var(--primary);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(37,99,235,0.08);
+}
+.form-select{
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 16px center;
+  padding-right:44px;
+}
+.auth-switch{
+  text-align:center;
+  margin-top:16px;
+  font-size:13px;
+  color:var(--sub);
+  font-weight:600;
+}
+.auth-switch b{
+  color:var(--primary);
+  cursor:pointer;
+}
+
+/* CUSTOM POPUP FOR NOT FOUND */
+.alert-popup-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  background: #fef2f2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px auto 14px;
+}
+.alert-popup-title {
+  font-size: 19px;
+  font-weight: 850;
+  color: var(--text);
+  text-align: center;
+}
+.alert-popup-desc {
+  font-size: 13px;
+  color: var(--sub);
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+.alert-btn-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+.btn-popup-sub {
+  height: 48px;
+  background: #f1f5f9;
+  color: var(--text);
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 750;
+}
+.btn-popup-primary {
+  height: 48px;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 750;
+}
+.btn-popup-sub:active, .btn-popup-primary:active {
+  transform: scale(0.97);
+}
+
+/* TOAST */
+#toast-container{
+  position:fixed;
+  z-index:99999;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%);
+  width:calc(100% - 32px);
+  max-width:400px;
+  pointer-events:none;
+}
+.toast{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px 16px;
+  margin-top:8px;
+  border-radius:12px;
+  background:#0f172a;
+  color:#fff;
+  font-size:12px;
+  font-weight:600;
+  box-shadow:0 10px 25px rgba(0,0,0,0.15);
+  animation:toastIn .25s ease, toastOut .3s ease 2.5s forwards;
+}
+.toast.success{background:#16a34a}
+.toast.error{background:#dc2626}
+.toast.info{background:#2563eb}
+@keyframes toastIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes toastOut{
+  to{opacity:0;transform:translateY(8px)}
+}
+.hidden{display:none !important;}
+</style>
+</head>
+
+<body>
+
+<div id="appPreloader">
+  <div class="preloader-logo-wrap">
+    <div class="preloader-spinner-ring"></div>
+    <img src="https://i.ibb.co/q3MGg8HD/100019360-10kb.jpg" alt="TutoGenius App Logo">
+  </div>
+  <div class="preloader-content">
+    <span class="preloader-title">TutoGenius</span>
+    <span class="preloader-subtext">Preparing application...</span>
+    <div class="preloader-progress-bar">
+      <div class="preloader-progress-fill"></div>
+    </div>
+  </div>
+</div>
+
+<div class="app-container">
+  <div class="top-nav">
+    <div class="lang-badge">
+      <i data-lucide="languages" style="width:15px;height:15px"></i>
+      <span>বাংলা</span>
+    </div>
+  </div>
+
+  <div id="slider" class="slider-container">
+    
+    <div class="slide">
+      <div class="illustration-box">
+        <svg viewBox="0 0 300 240" fill="none" class="w-full h-full">
+          <circle cx="150" cy="120" r="90" fill="#EFF6FF"/>
+          <rect x="70" y="40" width="160" height="150" rx="14" fill="#FFFFFF" stroke="#DBEAFE" stroke-width="2"/>
+          <rect x="85" y="60" width="130" height="70" rx="8" fill="#2563eb"/>
+          <circle cx="150" cy="95" r="16" fill="#FFFFFF"/>
+          <polygon points="146,88 158,95 146,102" fill="#2563eb"/>
+          <rect x="85" y="145" width="80" height="8" rx="4" fill="#93C5FD"/>
+          <rect x="85" y="160" width="110" height="6" rx="3" fill="#E2E8F0"/>
+          <circle cx="210" cy="180" r="28" fill="#3B82F6"/>
+          <path d="M200 180L208 188L222 174" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2 class="slide-title">Career at your fingertips, Welcome to TutoGenius!</h2>
+      <p class="slide-subtitle">Master your syllabus with high standard online lectures & guided learning paths.</p>
+    </div>
+
+    <div class="slide">
+      <div class="illustration-box">
+        <svg viewBox="0 0 300 240" fill="none" class="w-full h-full">
+          <circle cx="150" cy="120" r="90" fill="#EFF6FF"/>
+          <rect x="90" y="30" width="120" height="160" rx="10" fill="#FFFFFF" stroke="#DBEAFE" stroke-width="2"/>
+          <circle cx="205" cy="50" r="24" fill="#FFFFFF" stroke="#2563EB" stroke-width="3"/>
+          <path d="M205 38V50L213 54" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+          <rect x="105" y="60" width="50" height="8" rx="3" fill="#2563EB"/>
+          <rect x="105" y="80" width="70" height="6" rx="3" fill="#CBD5E1"/>
+          <rect x="105" y="100" width="60" height="6" rx="3" fill="#CBD5E1"/>
+          <rect x="105" y="120" width="70" height="6" rx="3" fill="#CBD5E1"/>
+          <rect x="80" y="165" width="140" height="30" rx="6" fill="#1E3A8A"/>
+          <circle cx="100" cy="180" r="5" fill="#60A5FA"/>
+          <circle cx="120" cy="180" r="5" fill="#60A5FA"/>
+        </svg>
+      </div>
+      <h2 class="slide-title">Videos, Notes, Quiz, Mocktest, Complete Exam Prep.</h2>
+      <p class="slide-subtitle">Access interactive mock tests and top-tier curated handwritten notes.</p>
+    </div>
+
+    <div class="slide">
+      <div class="illustration-box">
+        <svg viewBox="0 0 300 240" fill="none" class="w-full h-full">
+          <circle cx="150" cy="120" r="90" fill="#EFF6FF"/>
+          <path d="M80 80L150 45L220 80L150 115L80 80Z" fill="#2563EB"/>
+          <path d="M110 100V135C110 155 150 170 150 170C150 170 190 155 190 135V100" stroke="#1E3A8A" stroke-width="3" fill="#DBEAFE"/>
+          <path d="M210 90V130" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="210" cy="135" r="4" fill="#2563EB"/>
+        </svg>
+      </div>
+      <h2 class="slide-title">Admission, Scholarship, Govt Jobs & Career Guidance!</h2>
+      <p class="slide-subtitle">Stay updated with instant notifications on examinations and scholarships.</p>
+    </div>
+
+  </div>
+
+  <div class="bottom-panel">
+    <div class="dots-indicator">
+      <div class="dot active" id="dot0"></div>
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+    </div>
+    <button class="btn-main" onclick="openAuthModal('login')">
+      Let's Start
+    </button>
+  </div>
+</div>
+
+<div id="authModal" class="modal-overlay hidden" onclick="closeOnOverlay(event)">
+  <div class="modal-card">
+    <div class="modal-bar"></div>
+
+    <div class="modal-header">
+      <div id="modalHeaderTitle" class="modal-title">Welcome</div>
+      <button class="close-circle" onclick="closeAuthModal()" aria-label="Close">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLoginSubmit(event)" class="space-y-3">
+      <p class="text-xs text-slate-500 mb-3">Unlock all features with your unique UID & Key</p>
+
+      <div class="input-group">
+        <i data-lucide="user" class="input-icon-left"></i>
+        <input
+          type="text"
+          id="loginUid"
+          class="form-input uppercase"
+          placeholder="Enter UID"
+          required
+          autocomplete="username"
+          spellcheck="false"
+          oninput="formatUID(this)"
+        >
+        <i data-lucide="x" class="input-icon-right" onclick="clearInput('loginUid')"></i>
+      </div>
+
+      <div class="input-group">
+        <i data-lucide="lock" class="input-icon-left"></i>
+        <input
+          type="password"
+          id="loginKey"
+          class="form-input"
+          placeholder="Enter Key"
+          maxlength="8"
+          required
+          inputmode="numeric"
+          autocomplete="current-password"
+        >
+        <i data-lucide="eye-off" id="toggleLoginKey" class="input-icon-right" onclick="togglePass('loginKey','toggleLoginKey')"></i>
+      </div>
+
+      <div class="flex justify-end pr-1">
+        <span class="text-xs text-blue-600 font-bold cursor-pointer" onclick="showAlert('Please contact TutoGenius Team to recover your key.','info')">
+          Forgot Key?
+        </span>
+      </div>
+
+      <button type="submit" id="loginSubmitBtn" class="btn-main mt-4">
+        Login Securely
+      </button>
+
+      <div class="auth-switch">
+        Don't have an account? <b onclick="toggleTab('register')">Create Account</b>
+      </div>
+    </form>
+
+    <form id="registerForm" onsubmit="handleRegisterSubmit(event)" class="space-y-3 hidden">
+      <p class="text-xs text-slate-500 mb-3">Follow simple steps to setup your study profile</p>
+
+      <div class="input-group">
+        <i data-lucide="user" class="input-icon-left"></i>
+        <input
+          type="text"
+          id="regName"
+          class="form-input"
+          placeholder="Full Name"
+          required
+        >
+      </div>
+
+      <div class="input-group">
+        <i data-lucide="phone" class="input-icon-left"></i>
+        <input
+          type="tel"
+          id="regPhone"
+          class="form-input"
+          placeholder="Phone Number"
+          required
+          inputmode="tel"
+        >
+      </div>
+
+      <div class="input-group">
+        <i data-lucide="lock" class="input-icon-left"></i>
+        <input
+          type="password"
+          id="regKey"
+          class="form-input"
+          placeholder="Set 6-Digit Key"
+          maxlength="6"
+          required
+          inputmode="numeric"
+        >
+        <i data-lucide="eye-off" id="toggleRegKey" class="input-icon-right" onclick="togglePass('regKey','toggleRegKey')"></i>
+      </div>
+
+      <div class="input-group">
+        <i data-lucide="graduation-cap" class="input-icon-left"></i>
+        <select id="regClass" class="form-input form-select" required>
+          <option value="" disabled selected>Select Your Class</option>
+          <option value="Class 9">Class 9</option>
+          <option value="Class 10">Class 10</option>
+          <option value="Class 11">Class 11</option>
+          <option value="Class 12">Class 12</option>
+          <option value="College">College</option>
+          <option value="Competitive">Competitive</option>
+        </select> 
+      </div>
+
+      <button type="submit" id="regSubmitBtn" class="btn-main mt-4">
+        Create Account
+      </button>
+
+      <div class="auth-switch">
+        Already have an account? <b onclick="toggleTab('login')">Login</b>
+      </div>
+    </form>
+
+    <div class="text-[11px] text-center text-slate-400 mt-5">
+      By continuing, you agree to our <u>Terms of Services</u> and <u>Privacy Policy</u>
+    </div>
+  </div>
+</div>
+
+<div id="userNotFoundModal" class="modal-overlay hidden" onclick="closeNotFoundOnOverlay(event)">
+  <div class="modal-card">
+    <div class="modal-bar"></div>
+
+    <div class="alert-popup-icon">
+      <i data-lucide="user-x" style="width:30px;height:30px"></i>
+    </div>
+
+    <div class="alert-popup-title">Account Not Found</div>
+    <div class="alert-popup-desc">
+      We couldn't find an account matching this UID and Key. Please verify your credentials or create a new account.
+    </div>
+
+    <div class="alert-btn-group">
+      <button class="btn-popup-sub" onclick="closeNotFoundModal()">
+        Try Again
+      </button>
+      <button class="btn-popup-primary" onclick="switchToRegisterFromModal()">
+        Register Now
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  runTransaction
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCfd1bdt9dWsRKkX9xLFB_7Hf7GmZFZBag",
+  authDomain: "tutogenius-1.firebaseapp.com",
+  projectId: "tutogenius-1",
+  storageBucket: "tutogenius-1.firebasestorage.app",
+  messagingSenderId: "65839146612",
+  appId: "1:65839146612:web:4e54c6ad4cea4bc5859321"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Preloader Controller
+function hidePreloader() {
+  const preloader = document.getElementById("appPreloader");
+  if (preloader && !preloader.classList.contains("preloader-hidden")) {
+    preloader.classList.add("preloader-hidden");
+    setTimeout(() => {
+      preloader.remove();
+    }, 500);
+  }
+}
+
+// Check Existing User Session
+document.addEventListener("DOMContentLoaded", () => {
+  lucide.createIcons();
+
+  const savedUid = localStorage.getItem("tg_uid");
+  const savedKey = localStorage.getItem("tg_key");
+
+  if(savedUid && savedKey){
+    window.location.replace("home.html");
+    return;
+  }
+
+  // Smooth dismiss of preloader
+  setTimeout(hidePreloader, 350);
+
+  // Setup Scroll Indicator for Slider
+  const slider = document.getElementById("slider");
+  if(slider){
+    slider.addEventListener("scroll", () => {
+      const slideIndex = Math.round(slider.scrollLeft / slider.clientWidth);
+      for(let i = 0; i < 3; i++){
+        const dot = document.getElementById("dot" + i);
+        if(dot){
+          if(i === slideIndex) dot.classList.add("active");
+          else dot.classList.remove("active");
+        }
+      }
+    });
+  }
+});
+
+// UI Modal Controls
+window.openAuthModal = function(tab){
+  toggleTab(tab);
+  document.getElementById("authModal").classList.remove("hidden");
+};
+
+window.closeAuthModal = function(){
+  document.getElementById("authModal").classList.add("hidden");
+};
+
+window.closeOnOverlay = function(e){
+  if(e.target.id === "authModal") closeAuthModal();
+};
+
+window.closeNotFoundModal = function(){
+  document.getElementById("userNotFoundModal").classList.add("hidden");
+};
+
+window.closeNotFoundOnOverlay = function(e){
+  if(e.target.id === "userNotFoundModal") closeNotFoundModal();
+};
+
+window.switchToRegisterFromModal = function(){
+  closeNotFoundModal();
+  openAuthModal("register");
+};
+
+window.toggleTab = function(tab){
+  const loginForm = document.getElementById("loginForm");
+  const regForm = document.getElementById("registerForm");
+  const title = document.getElementById("modalHeaderTitle");
+
+  if(tab === "login"){
+    loginForm.classList.remove("hidden");
+    regForm.classList.add("hidden");
+    title.textContent = "Login";
+  } else {
+    loginForm.classList.add("hidden");
+    regForm.classList.remove("hidden");
+    title.textContent = "Create Account";
+  }
+  lucide.createIcons();
+};
+
+window.formatUID = function(input){
+  input.value = input.value.replace(/\s+/g, "").toUpperCase();
+};
+
+window.clearInput = function(id){
+  const el = document.getElementById(id);
+  if(el){
+    el.value = "";
+    el.focus();
+  }
+};
+
+window.togglePass = function(inputId, iconId){
+  const input = document.getElementById(inputId);
+  const icon = document.getElementById(iconId);
+  if(input.type === "password"){
+    input.type = "text";
+    icon.setAttribute("data-lucide", "eye");
+  } else {
+    input.type = "password";
+    icon.setAttribute("data-lucide", "eye-off");
+  }
+  lucide.createIcons();
+};
+
+// LOGIN HANDLER
+window.handleLoginSubmit = async function(e){
+  e.preventDefault();
+  const uid = document.getElementById("loginUid").value.replace(/\s+/g, "").toUpperCase();
+  const key = document.getElementById("loginKey").value.trim();
+
+  if(!uid || !/^\d{6}$/.test(key)){
+    showAlert("Please provide a valid UID & 6-digit key", "error");
+    return;
+  }
+
+  const btn = document.getElementById("loginSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "Authenticating...";
+
+  try{
+    const snap = await getDoc(doc(db, "users", uid));
+
+    if(snap.exists() && snap.data().key === key){
+      const data = snap.data();
+      localStorage.setItem("tg_uid", uid);
+      localStorage.setItem("tg_key", key);
+      localStorage.setItem("tg_user_data", JSON.stringify(data));
+
+      showAlert("Login Successful!", "success");
+      setTimeout(() => {
+        window.location.replace("home.html");
+      }, 500);
+    } else {
+      // User Not Found / Invalid Credentials Popup
+      document.getElementById("userNotFoundModal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+  }catch(err){
+    showAlert("Login error: " + err.message, "error");
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "Login Securely";
+  }
+};
+
+// REGISTER HANDLER
+window.handleRegisterSubmit = async function(e){
+  e.preventDefault();
+  const name = document.getElementById("regName").value.trim();
+  const phone = document.getElementById("regPhone").value.trim();
+  const key = document.getElementById("regKey").value.trim();
+  const userClass = document.getElementById("regClass").value;
+
+  if(!name || !phone || !/^\d{6}$/.test(key) || !userClass){
+    showAlert("Please complete all required fields!", "error");
+    return;
+  }
+
+  const btn = document.getElementById("regSubmitBtn");
+  btn.disabled = true;
+  btn.textContent = "Creating Account...";
+
+  try{
+    const userPayload = {
+      name,
+      phone,
+      userClass,
+      key,
+      balance: 0
+    };
+
+    const newUid = await runTransaction(db, async transaction => {
+      const metaRef = doc(db, "metadata", "users");
+      const metaSnap = await transaction.get(metaRef);
+      const nextId = (metaSnap.exists() ? metaSnap.data().lastId || 0 : 0) + 1;
+      const formattedId = "TG26" + String(nextId).padStart(4, "0");
+
+      transaction.set(metaRef, { lastId: nextId }, { merge: true });
+      transaction.set(doc(db, "users", formattedId), userPayload);
+      return formattedId;
+    });
+
+    localStorage.setItem("tg_uid", newUid);
+    localStorage.setItem("tg_key", key);
+    localStorage.setItem("tg_user_data", JSON.stringify(userPayload));
+
+    showAlert("Account Created Successfully!", "success");
+    setTimeout(() => {
+      window.location.replace("home.html");
+    }, 500);
+
+  }catch(err){
+    showAlert("Registration failed: " + err.message, "error");
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "Create Account";
+  }
+};
+
+// TOAST NOTIFICATIONS
+window.showAlert = function(msg, type = "info"){
+  const container = document.getElementById("toast-container");
+  if(!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  let icon = "info";
+  if(type === "success") icon = "check-circle";
+  if(type === "error") icon = "alert-circle";
+
+  toast.innerHTML = `
+    <i data-lucide="${icon}" style="width:16px;flex:none"></i>
+    <span>${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</span>
+  `;
+  container.appendChild(toast);
+  lucide.createIcons();
+
+  setTimeout(() => { toast.remove(); }, 2800);
+};
+</script>
+
+</body>
+</html>

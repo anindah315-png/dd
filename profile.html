@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile & Settings</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        a, span, p, h1, h2, h3, h4, h5, h6, div, button, input, select {
+            -webkit-tap-highlight-color: transparent !important;
+            text-decoration: none;
+        }
+
+        input {
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --btn-blue: #2563eb;
+            --bg-gray: #f8fafc;
+            --card-border: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body {
+            background-color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ================= SKELETON SHIMMER ================= */
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background-color: #e2e8f0 !important;
+            color: transparent !important;
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        .skeleton::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0,
+                rgba(255, 255, 255, 0.7) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        /* App Container */
+        .app-container {
+            position: fixed;
+            top: 45px;
+            bottom: 10px;
+            margin-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 500px;
+            overflow-y: auto;
+            background: #f8fafc;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+        }
+
+        .app-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Top Header */
+        .app-header {
+             position: fixed;
+            top: 0; 
+            left: 50%; justify-content: space-between;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            height: 45px; 
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            padding-left: 10px; padding-right: 10px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+        }
+
+        .header-title-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 800; 
+            color: #fff;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 16px 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* Profile Hero Card */
+        .profile-hero-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 16px;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .profile-hero-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-width: 0;
+        }
+
+        /* Dynamic Name Avatar Badge */
+        .profile-avatar-badge {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+            text-transform: uppercase;
+        }
+
+        .profile-details {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .profile-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 3px;
+        }
+
+        .profile-phone {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .profile-class-pill {
+            font-size: 10px;
+            font-weight: 750;
+            background: #eff6ff;
+            color: var(--primary);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #bfdbfe;
+            display: inline-block;
+        }
+
+        .profile-edit-btn {
+            background: #eff6ff;
+            border: none;
+            color: var(--primary);
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex: none;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .profile-edit-btn:active {
+            transform: scale(0.92);
+            background: #dbeafe;
+        }
+
+        /* SECTION LABEL */
+        .section-label {
+            font-size: 12px;
+            font-weight: 750;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            margin-bottom: -4px;
+            padding-left: 2px;
+        }
+
+        /* Quick Support Grid */
+        .support-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .support-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 10px 4px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dark);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+
+        .support-card:active {
+            transform: scale(0.95);
+            border-color: #cbd5e1;
+        }
+
+        .support-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .support-icon-box img {
+            width: 26px;
+            height: 26px;
+            object-fit: contain;
+        }
+
+        /* Menu Card Group */
+        .menu-group {
+            background: #ffffff;
+            border-radius: 18px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(15, 23, 42, 0.02);
+        }
+
+        .menu-item {
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:active {
+            background-color: #f8fafc;
+        }
+
+        .menu-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: none;
+        }
+
+        .bg-blue-light { background-color: #eff6ff; color: #2563eb; }
+        .bg-amber-light { background-color: #fef3c7; color: #d97706; }
+        .bg-green-light { background-color: #ecfdf5; color: #059669; }
+        .bg-slate-light { background-color: #f1f5f9; color: #475569; }
+        .bg-red-light { background-color: #fef2f2; color: #dc2626; }
+        .bg-purple-light { background-color: #faf5ff; color: #9333ea; }
+
+        .menu-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .chevron-icon {
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Footer Info Box */
+        .footer-info-card {
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
+            margin-top: 4px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .footer-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .footer-version {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* Modal Overlay & Bottom Sheet (Z-index increased and structured) */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            max-width: 500px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 999998; /* Massive z-index to sit on top of footer.js element */
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .bottom-sheet {    
+            z-index: 999998;
+            background: #ffffff;
+            width: 100%;
+            border-top-left-radius: 26px;
+            border-top-right-radius: 26px;
+            padding: 16px 20px calc(20px + env(safe-area-inset-bottom));
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-handle {
+            width: 40px;
+            height: 4px;
+            border-radius: 10px;
+            background: #cbd5e1;
+            margin: 0 auto 16px;
+        }
+
+        .modal-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+
+        .modal-header-title {
+            font-size: 18px;
+            font-weight: 850;
+            color: var(--text-dark);
+        }
+
+        .modal-close-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        .modal-close-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 750;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            padding-left: 2px;
+        }
+
+        .form-input-box {
+            display: flex;
+            align-items: center;
+            background-color: #f1f5f9;
+            border: 1.5px solid transparent;
+            border-radius: 14px;
+            padding: 12px 14px;
+            gap: 10px;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .form-input-box:focus-within {
+            border-color: var(--primary);
+            background-color: #ffffff;
+        }
+
+        .form-input-box i {
+            color: #94a3b8;
+            width: 18px;
+            height: 18px;
+            flex: none;
+        }
+
+        .form-input-box input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .btn-update {
+            width: 100%;
+            min-height: 48px;
+            background-color: var(--btn-blue);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-update:active {
+            transform: scale(0.98);
+        }
+
+        /* Logout Dialog */
+        .logout-content {
+            text-align: center;
+            padding: 6px 0 8px;
+        }
+
+        .logout-icon-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 18px;
+            background-color: #fee2e2;
+            color: #ef4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+        }
+
+        .logout-title {
+            font-size: 18px;
+            font-weight: 850;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .logout-desc {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .modal-btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        .btn-logout-confirm {
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 750;
+            cursor: pointer;
+        }
+
+        /* Class Selector Popup */
+        .class-selector-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            max-width: 500px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 999999; /* Higher z-index to sit on top of the modal itself */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .class-selector-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 320px;
+            border-radius: 18px;
+            box-shadow: 0 16px 36px rgba(0,0,0,0.18);
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+        }
+
+        .class-option {
+            padding: 14px 18px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            border-bottom: 1px solid #f1f5f9;
+            transition: background 0.15s;
+        }
+
+        .class-option:last-child {
+            border-bottom: none;
+        }
+
+        .class-option:active {
+            background-color: #f8fafc;
+        }
+
+        .class-option.selected {
+            background-color: #eff6ff;
+            color: var(--primary);
+        }
+
+        /* Toast Container */
+        #toast-container {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000000;
+            width: calc(100% - 32px);
+            max-width: 430px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: #0f172a;
+            color: white;
+            padding: 12px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin-top: 8px;
+            animation: toastIn 0.25s ease;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Button Dots Loader */
+        .dots-loader {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dots-loader div {
+            width: 7px;
+            height: 7px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation: bounce 0.5s infinite alternate;
+        }
+
+        .dots-loader div:nth-child(2) { animation-delay: 0.15s; }
+        .dots-loader div:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes bounce {
+            from { opacity: 0.3; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(-3px); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="app-header">
+        <div class="header-title-box">
+            <i data-lucide="settings" style="width: 20px; height: 20px; color: #fff;"></i>
+            <span class="header-title">Profile & Settings</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-hero-card">
+            <div class="profile-hero-left">
+                <div id="displayInitials" class="profile-avatar-badge skeleton">TG</div>
+                <div class="profile-details">
+                    <span id="displayName" class="profile-name skeleton">User Name</span>
+                    <div class="profile-meta-row">
+                        <span id="displayPhone" class="profile-phone skeleton">+91 ----------</span>
+                        <span id="displayClassBadge" class="profile-class-pill">General</span>
+                    </div>
+                </div>
+            </div>
+            <button class="profile-edit-btn" onclick="openUpdateModal()" title="Edit Profile" aria-label="Edit Profile">
+                <i data-lucide="pencil" style="width: 18px; height: 18px;"></i>
+            </button>
+        </div>
+
+        <span class="section-label">Help & Support Contacts</span>
+        <div class="support-grid">
+            <a href="tel:9332466756" class="support-card">
+                <div class="support-icon-box" style="background:#eff6ff">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3616/3616215.png" onerror="this.src='https://placehold.co/50x50'" alt="Founder">
+                </div>
+                <span>Founder</span>
+            </a>
+            <a href="tel:7797258709" class="support-card">
+                <div class="support-icon-box" style="background:#fef3c7">
+                    <img src="https://cdn-icons-png.flaticon.com/512/724/724664.png" onerror="this.src='https://placehold.co/50x50'" alt="Co-Founder">
+                </div>
+                <span>Co-Founder</span>
+            </a>
+            <a href="tel:9339061296" class="support-card">
+                <div class="support-icon-box" style="background:#ecfdf5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/9946/9946341.png" onerror="this.src='https://placehold.co/50x50'" alt="Help Team">
+                </div>
+                <span>Help Team</span>
+            </a>
+            <a href="https://wa.me/919332466756" target="_blank" class="support-card">
+                <div class="support-icon-box" style="background:#f0fdf4">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3670/3670051.png" onerror="this.src='https://placehold.co/50x50'" alt="WhatsApp">
+                </div>
+                <span>WhatsApp</span>
+            </a>
+        </div>
+
+        <span class="section-label">Account & Services</span>
+        <div class="menu-group">
+            <a href="https://edulive.ooulet.com/account" target="_blank" class="menu-item">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-blue-light">
+                        <i data-lucide="shopping-cart" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <span class="menu-label">Order History</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </a>
+
+            <a href="https://search.google.com/local/writereview?placeid=ChIJC7tiZ6eItw4RGutOrlxl4sA&source=g.page.m.ia._&laa=nmx-review-solicitation-ia2" target="_blank" class="menu-item">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-amber-light">
+                        <i data-lucide="star" style="width: 18px; height: 18px;" fill="currentColor"></i>
+                    </div>
+                    <span class="menu-label">Rate This App</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </a>
+
+            <a href="mailto:support.tutogenius@gmail.com" class="menu-item">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-green-light">
+                        <i data-lucide="mail" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <span class="menu-label">Contact Us via Email</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </a>
+
+            <a href="https://www.appcreator24.com/app3994375-8qvgyf" target="_blank" class="menu-item">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-purple-light">
+                        <i data-lucide="download" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <span class="menu-label">Update App</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </a>
+        </div>
+
+        <span class="section-label">General & Security</span>
+        <div class="menu-group">
+            <a href="https://tuttogenius.netlify.app/privacy.html" class="menu-item">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-slate-light">
+                        <i data-lucide="shield-check" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <span class="menu-label">Privacy Policy</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </a>
+
+            <div class="menu-item" onclick="confirmLogout()">
+                <div class="menu-item-left">
+                    <div class="menu-icon-box bg-red-light">
+                        <i data-lucide="log-out" style="width: 18px; height: 18px;"></i>
+                    </div>
+                    <span class="menu-label" style="color: #ef4444;">Logout</span>
+                </div>
+                <i data-lucide="chevron-right" class="chevron-icon"></i>
+            </div>
+        </div>
+
+        <div class="footer-info-card">
+            <div class="footer-tag">
+                <i data-lucide="heart" style="width: 16px; height: 16px; fill: #3b82f6; color: #3b82f6;"></i>
+                <span>Made with Dal-Vat & Code 🇮🇳</span>
+            </div>
+            <span class="footer-version">App Version 1.2.4 • TutoGenius</span>
+        </div>
+    </div>
+
+    <!-- Added 'defer' attribute to make the footer load smoothly without blocking the UI -->
+    <script src="footer.js" defer></script>
+</div>
+
+<!-- ========================================================================= 
+     Modals moved completely OUTSIDE .app-container to avoid footer clipping/overlaps 
+     ========================================================================= -->
+<div id="toast-container"></div>
+
+<div id="updateProfileModal" class="modal-overlay hidden" onclick="handleOutsideClick(event, 'updateProfileModal')">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-header-row">
+            <div class="modal-header-title">Edit Profile Information</div>
+            <button class="modal-close-btn" onclick="closeModal('updateProfileModal')" aria-label="Close">
+                <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+            </button>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <div class="form-input-box">
+                <i data-lucide="user"></i>
+                <input type="text" id="editName" placeholder="Enter your full name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <div class="form-input-box">
+                <i data-lucide="smartphone"></i>
+                <input type="tel" id="editPhone" placeholder="Enter 10-digit mobile number" maxlength="10">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Currently Studying</label>
+            <div class="form-input-box" onclick="openClassSelector()">
+                <i data-lucide="graduation-cap"></i>
+                <input type="text" id="editClass" value="Teacher" readonly style="cursor: pointer;">
+                <i data-lucide="chevron-down" style="margin-left: auto;"></i>
+            </div>
+        </div>
+
+        <button id="submitUpdateBtn" class="btn-update" onclick="submitProfileUpdate()">Save Changes</button>
+    </div>
+</div>
+
+<div id="logoutModal" class="modal-overlay hidden" onclick="handleOutsideClick(event, 'logoutModal')">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="logout-content">
+            <div class="logout-icon-circle">
+                <i data-lucide="log-out" style="width: 26px; height: 26px;"></i>
+            </div>
+            <div class="logout-title">Log Out?</div>
+            <div class="logout-desc">Are you sure you want to log out from this device?</div>
+            <div class="modal-btn-group">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button id="logoutConfirmBtn" class="btn-logout-confirm" onclick="executeLogout()">Logout</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="classSelectorModal" class="class-selector-overlay hidden" onclick="handleOutsideClick(event, 'classSelectorModal')">
+    <div class="class-selector-card" onclick="event.stopPropagation()">
+        <div class="class-option" onclick="selectClass('Class 9')">Class 9</div>
+        <div class="class-option" onclick="selectClass('Class 10')">Class 10</div>
+        <div class="class-option" onclick="selectClass('Madhyamik')">Madhyamik</div>
+        <div class="class-option" onclick="selectClass('Class 11')">Class 11</div>
+        <div class="class-option" onclick="selectClass('Class 12 (HS)')">Class 12 (HS)</div>
+        <div class="class-option" onclick="selectClass('College')">College</div>
+        <div class="class-option selected" onclick="selectClass('Teacher')">Teacher</div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+        getFirestore, doc, updateDoc, onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCfd1bdt9dWsRKkX9xLFB_7Hf7GmZFZBag",
+        authDomain: "tutogenius-1.firebaseapp.com",
+        projectId: "tutogenius-1",
+        storageBucket: "tutogenius-1.firebasestorage.app",
+        messagingSenderId: "65839146612",
+        appId: "1:65839146612:web:4e54c6ad4cea4bc5859321"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let unsubSnapshot = null;
+
+    /* AUTH GUARD: Redirect to home.html if user is not logged in */
+    function checkAuthGuard() {
+        const uid = localStorage.getItem('tg_uid');
+        if (!uid) {
+            window.location.replace("home.html");
+            return false;
+        }
+        return true;
+    }
+
+    /* INITIALS GENERATOR */
+    function getInitials(name) {
+        if (!name) return "TG";
+        const parts = name.trim().split(" ");
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (!checkAuthGuard()) return;
+
+        lucide.createIcons();
+        loadFromLocalStorage();
+        initProfileData();
+    });
+
+    /* LOCAL STORAGE FAST RENDER */
+    function loadFromLocalStorage() {
+        const cachedName = localStorage.getItem('tg_name');
+        const cachedPhone = localStorage.getItem('tg_phone');
+        const cachedClass = localStorage.getItem('tg_class');
+
+        if (cachedName || cachedPhone) {
+            renderProfile(cachedName || "User Name", cachedPhone || "", cachedClass || "Student");
+        }
+    }
+
+    function saveToLocalStorage(name, phone, userClass) {
+        if (name !== undefined) localStorage.setItem('tg_name', name);
+        if (phone !== undefined) localStorage.setItem('tg_phone', phone);
+        if (userClass !== undefined) localStorage.setItem('tg_class', userClass);
+    }
+
+    function renderProfile(name, phone, userClass) {
+        const nameEl = document.getElementById('displayName');
+        const phoneEl = document.getElementById('displayPhone');
+        const initialsEl = document.getElementById('displayInitials');
+        const classEl = document.getElementById('displayClassBadge');
+        const editClassEl = document.getElementById('editClass');
+
+        if (nameEl) {
+            nameEl.textContent = name || "User Name";
+            nameEl.classList.remove('skeleton');
+        }
+        if (phoneEl) {
+            phoneEl.textContent = phone ? `+91 ${phone}` : "No number added";
+            phoneEl.classList.remove('skeleton');
+        }
+        if (initialsEl) {
+            initialsEl.textContent = getInitials(name);
+            initialsEl.classList.remove('skeleton');
+        }
+        if (classEl) {
+            classEl.textContent = userClass || "Student";
+        }
+        if (editClassEl && userClass) {
+            editClassEl.value = userClass;
+        }
+    }
+
+    /* UI UTILITIES */
+    window.showAlert = function(msg) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = msg;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    };
+
+    window.closeModal = function(id) {
+        document.getElementById(id).classList.add('hidden');
+    };
+
+    window.handleOutsideClick = function(event, modalId) {
+        if (event.target.id === modalId) {
+            closeModal(modalId);
+        }
+    };
+
+    function showDotLoading(btnElement) {
+        btnElement.dataset.originalText = btnElement.textContent;
+        btnElement.disabled = true;
+        btnElement.innerHTML = `<div class="dots-loader"><div></div><div></div><div></div></div>`;
+    }
+
+    function hideDotLoading(btnElement) {
+        if (btnElement.dataset.originalText) {
+            btnElement.textContent = btnElement.dataset.originalText;
+        }
+        btnElement.disabled = false;
+    }
+
+    /* PROFILE FIREBASE INITIALIZATION */
+    function initProfileData() {
+        const uid = localStorage.getItem('tg_uid');
+        if (!uid) return;
+
+        if (unsubSnapshot) unsubSnapshot();
+        unsubSnapshot = onSnapshot(doc(db, "users", uid), (snap) => {
+            if (snap.exists()) {
+                const data = snap.data();
+                const userName = data.name || "";
+                const userPhone = data.phone || "";
+                const userClass = data.userClass || "Teacher";
+
+                renderProfile(userName, userPhone, userClass);
+                saveToLocalStorage(userName, userPhone, userClass);
+            }
+        }, (err) => {
+            console.warn("Real-time load error, relying on cache:", err);
+        });
+    }
+
+    /* MODAL & CLASS POPUP ACTIONS */
+    window.openUpdateModal = function() {
+        const nameVal = document.getElementById('displayName').textContent;
+        const phoneVal = localStorage.getItem('tg_phone') || "";
+        
+        document.getElementById('editName').value = nameVal === "User Name" ? "" : nameVal;
+        document.getElementById('editPhone').value = phoneVal;
+        document.getElementById('updateProfileModal').classList.remove('hidden');
+        lucide.createIcons();
+    };
+
+    window.openClassSelector = function() {
+        document.getElementById('classSelectorModal').classList.remove('hidden');
+    };
+
+    window.selectClass = function(className) {
+        document.getElementById('editClass').value = className;
+        
+        const options = document.querySelectorAll('.class-option');
+        options.forEach(opt => {
+            if (opt.textContent === className) {
+                opt.classList.add('selected');
+            } else {
+                opt.classList.remove('selected');
+            }
+        });
+
+        document.getElementById('classSelectorModal').classList.add('hidden');
+    };
+
+    window.submitProfileUpdate = async function() {
+        const btn = document.getElementById('submitUpdateBtn');
+        const newName = document.getElementById('editName').value.trim();
+        const newPhone = document.getElementById('editPhone').value.trim();
+        const newClass = document.getElementById('editClass').value;
+
+        if (!newName) { showAlert("Please enter your name!"); return; }
+        if (!/^\d{10}$/.test(newPhone)) { showAlert("Enter a valid 10-digit mobile number!"); return; }
+
+        showDotLoading(btn);
+        const uid = localStorage.getItem('tg_uid');
+
+        try {
+            await updateDoc(doc(db, "users", uid), {
+                name: newName,
+                phone: newPhone,
+                userClass: newClass
+            });
+
+            renderProfile(newName, newPhone, newClass);
+            saveToLocalStorage(newName, newPhone, newClass);
+
+            closeModal('updateProfileModal');
+            showAlert("Profile updated successfully!");
+        } catch (e) {
+            showAlert("Failed to update profile: " + e.message);
+        } finally {
+            hideDotLoading(btn);
+        }
+    };
+
+    /* LOGOUT LOGIC */
+    window.confirmLogout = function() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+        lucide.createIcons();
+    };
+
+    window.executeLogout = function() {
+        const btn = document.getElementById('logoutConfirmBtn');
+        showDotLoading(btn);
+
+        localStorage.clear();
+
+        setTimeout(() => {
+            window.location.replace("home.html");
+        }, 400);
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>My Study - TutoGenius</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+  *, *::before, *::after {
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            transition: background 0.3s, color 0.3s, border-color 0.3s;
+            -webkit-tap-highlight-color: transparent !important;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        a, span, p, h1, h2, h3, h4, h5, h6, div, button, input, select {
+            -webkit-tap-highlight-color: transparent !important;
+            text-decoration: none;
+        }
+
+        input, select {
+            -webkit-user-select: auto !important;
+            -moz-user-select: auto !important;
+            -ms-user-select: auto !important;
+            user-select: auto !important;
+        }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+html,body{
+  width:100%;
+  height:100%;
+  background:#f8fafc;
+}
+body{
+  display:flex;
+  justify-content:center;
+  overflow:hidden;
+}
+a{
+  text-decoration:none;
+  color:inherit;
+  display:block;
+}
+
+:root{
+  --primary:#2563eb;
+  --text:#0f172a;
+  --sub:#64748b;
+  --bg:#ffffff;
+  --border:#e2e8f0;
+}
+
+/* Header */
+.header{
+   position: fixed;
+  top: 0; 
+  left: 50%; justify-content: space-between;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 500px;
+  height: 45px; 
+  background: #2563eb;
+  display: flex;
+  align-items: center;
+  padding-left: 10px; padding-right: 10px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.2);
+}
+.header-btn{
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  border-radius: 50%;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.header-title{
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+/* App Body */
+.app-container {
+  position: fixed;
+  top: 45px;
+  bottom: 10px;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  overflow-y: auto;
+  background: #f8fafc;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 14px 40px;
+}
+.app-container::-webkit-scrollbar { display: none; }
+
+.course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Redesigned Compact Course Card */
+.course-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.course-card:hover {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.06);
+  
+}
+
+
+.course-thumb-wrap {
+  width: 110px;
+  height: 76px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  background: #0f172a;
+}
+.course-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.course-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.course-meta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.category-pill {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 2px 7px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.enrolled-badge {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #16a34a;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.course-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.course-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+.progress-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.progress-bar-bg {
+  flex: 1;
+  height: 5px;
+  background: #f1f5f9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+.progress-text {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #64748b;
+  min-width: 26px;
+}
+
+.play-arrow-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.course-card:hover .play-arrow-btn {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #64748b;
+  text-align: center;
+  gap: 12px;
+}
+.empty-state h3 {
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 16px;
+}
+.browse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 16px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <span class="header-title">My Study</span>
+  <button class="header-btn" onclick="location.reload()" aria-label="Refresh">
+    <i data-lucide="rotate-cw" style="width:18px;height:18px;"></i>
+  </button>
+</div>
+
+<div class="app-container" id="appContainer">
+  <div class="course-list" id="courseListContainer"></div>
+</div>
+
+   <!-- Added 'defer' attribute to make the footer load smoothly without blocking the UI -->
+    <script src="footer.js" defer></script>
+
+  
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCfd1bdt9dWsRKkX9xLFB_7Hf7GmZFZBag",
+  authDomain: "tutogenius-1.firebaseapp.com",
+  projectId: "tutogenius-1",
+  storageBucket: "tutogenius-1.firebasestorage.app",
+  messagingSenderId: "65839146612",
+  appId: "1:65839146612:web:4e54c6ad4cea4bc5859321"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const COURSES = [
+  {
+    id: "TGSEM22026",
+    category: "HS 11-12",
+    title: "Class 11 2nd Sem ( Bengali & English ):: একাদশ শ্রেণির দ্বিতীয় সেমিস্টার!",
+    price: 199,
+    image: "https://i.ibb.co/S47J6S9K/SEM2.jpg",
+    studyUrl: "https://tutogeniusin.netlify.app/HS/Sem2/subject.html",
+    startDate: "2026-09-01",
+    endDate: "2027-12-30"
+  },
+  {
+    id: "TGCOSEM426",
+    category: "HS 11-12",
+    title: "Class 12 4th Sem ( Bengali & English ):: উচ্চমাধ্যমিক চতুর্থ সেমিস্টার!",
+    price: 199,
+    image: "https://i.ibb.co/YF4X3kBL/SEM4.jpg",
+    studyUrl: "https://tutogeniusin.netlify.app/HS/Sem4/subject.html",
+    startDate: "2026-09-01",
+    endDate: "2027-12-30"
+  },
+  {
+    id: "TGMADHYAMIK2026",
+    category: "Madhyamik",
+    title: "Madhyamik All Subjects :: মাধ্যমিক সম্পূর্ণ প্রস্তুতি ব্যাচ!",
+    price: 299,
+    image: "https://i.ibb.co/pvHrmp04/Class-11.jpg",
+    studyUrl: "#",
+    startDate: "2026-09-01",
+    endDate: "2026-12-15"
+  },
+  {
+    id: "TGEXAMPREP2026",
+    category: "Exam prep",
+    title: "Govt Job & Competitive Exam Preparation 2026",
+    price: 399,
+    image: "https://i.ibb.co/pvHrmp04/Class-11.jpg",
+    studyUrl: "#",
+    startDate: "2026-09-01",
+    endDate: "2026-10-30"
+  },
+  {
+    id: "TGSKILLDEV2026",
+    category: "Skill & Devolop",
+    title: "Web Development & Programming Masterclass",
+    price: 499,
+    image: "https://i.ibb.co/pvHrmp04/Class-11.jpg",
+    studyUrl: "#",
+    startDate: "2026-09-01",
+    endDate: "2026-10-10"
+  }
+];
+
+let enrolledCourseIds = new Set();
+
+// ================= NEW: First Load Check =================
+document.addEventListener("DOMContentLoaded", () => {
+    const isFirstLoad = !localStorage.getItem('tg_study_initialized');
+    if (isFirstLoad) {
+        localStorage.setItem('tg_study_initialized', 'true');
+        console.log("First time opening My Study tab. Initializing cache...");
+    }
+});
+// =========================================================
+
+function calculateProgress(startDateStr, endDateStr) {
+  const now = Date.now();
+  const start = new Date(startDateStr).getTime();
+  const end = new Date(endDateStr).getTime();
+
+  if (isNaN(start) || isNaN(end)) return 10;
+  if (now > end) return 100;
+  if (now < start) return 5;
+
+  return Math.min(100, Math.max(5, Math.round(((now - start) / (end - start)) * 100)));
+}
+
+function normalizeId(id) {
+  return String(id || "").trim().toLowerCase();
+}
+
+function renderStudyList() {
+  const container = document.getElementById("courseListContainer");
+  container.innerHTML = "";
+
+  const enrolledList = COURSES.filter(course => 
+    [...enrolledCourseIds].some(eid => normalizeId(eid) === normalizeId(course.id))
+  );
+
+  if (enrolledList.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <i data-lucide="book-open-check" style="width:52px;height:52px;color:#94a3b8;"></i>
+        <h3>কোনো নথিভুক্ত কোর্স নেই</h3>
+        <p class="text-xs text-slate-500">You haven't enrolled in any courses yet.</p>
+        <a href="courses.html" class="browse-btn">
+          <i data-lucide="search" style="width:16px;height:16px;"></i>
+          Enroll Courses
+        </a>
+      </div>
+    `;
+    if(window.lucide) lucide.createIcons();
+    return;
+  }
+
+  enrolledList.forEach(course => {
+    const percent = calculateProgress(course.startDate, course.endDate);
+    const link = course.studyUrl || `classroom.html?courseId=${course.id}`;
+
+    const card = document.createElement("a");
+    card.href = link;
+    card.className = "course-card";
+
+    card.innerHTML = `
+      <div class="course-thumb-wrap">
+        <img src="${course.image}" class="course-thumb" alt="${course.title}">
+      </div>
+      <div class="course-info">
+        <div class="course-meta-top">
+          <span class="category-pill">${course.category}</span>
+          <span class="enrolled-badge">
+            <i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Enrolled
+          </span>
+        </div>
+
+        <h2 class="course-title">${course.title}</h2>
+
+        <div class="course-footer">
+          <div class="progress-container">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" style="width: ${percent}%;"></div>
+            </div>
+            <span class="progress-text" style="display: none;">${percent}%</span>
+           <span class="progress-text">End</span>
+          </div>
+          <div class="play-arrow-btn">
+            <i data-lucide="chevron-right" style="width:16px;height:16px;"></i>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+
+  if(window.lucide) lucide.createIcons();
+}
+
+function extractCourseIdsFromData(data) {
+  if (!data) return [];
+  const found = [];
+
+  const arrayFields = [data.enrolled_courses, data.enrolledCourses, data.courses];
+  for (const list of arrayFields) {
+    if (Array.isArray(list)) {
+      list.forEach(item => {
+        if (typeof item === "string") found.push(item);
+        else if (item && typeof item === "object" && (item.id || item.courseId)) {
+          found.push(item.id || item.courseId);
+        }
+      });
+    }
+  }
+
+  if (data.enrolled_courses && typeof data.enrolled_courses === "object" && !Array.isArray(data.enrolled_courses)) {
+    Object.keys(data.enrolled_courses).forEach(k => {
+      if (data.enrolled_courses[k]) found.push(k);
+    });
+  }
+
+  return found;
+}
+
+async function loadUserEnrollments(uid) {
+  if (!uid) {
+    renderStudyList();
+    return;
+  }
+
+  let hasRenderedFromCache = false;
+  
+  // ================= CACHE FIRST (STALE-WHILE-REVALIDATE) =================
+  try {
+    const cachedUserData = JSON.parse(localStorage.getItem("tg_user_data") || "{}");
+    const cachedEnrollmentsCache = JSON.parse(localStorage.getItem("tg_enrollments_cache") || "[]");
+    
+    // Merge user doc arrays with subcollection cache
+    extractCourseIdsFromData(cachedUserData).forEach(id => enrolledCourseIds.add(id));
+    cachedEnrollmentsCache.forEach(id => enrolledCourseIds.add(id));
+
+    // If we have cache, render INSTANTLY
+    if (enrolledCourseIds.size > 0 || Object.keys(cachedUserData).length > 0) {
+      renderStudyList();
+      hasRenderedFromCache = true;
+    }
+  } catch (e) {}
+
+  // ================= BACKGROUND REVALIDATION =================
+  try {
+    let newCourseIds = new Set();
+    
+    // Fetch main user document
+    const userDocRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userDocRef);
+
+    if (userSnap.exists()) {
+      const data = userSnap.data();
+      localStorage.setItem("tg_user_data", JSON.stringify(data));
+      extractCourseIdsFromData(data).forEach(id => newCourseIds.add(id));
+    }
+
+    // Fetch enrollments subcollection
+    let subcollectionCache = [];
+    try {
+      const subColRef = collection(db, "users", uid, "enrollments");
+      const subSnap = await getDocs(subColRef);
+      subSnap.forEach(subDoc => {
+        newCourseIds.add(subDoc.id);
+        subcollectionCache.push(subDoc.id);
+        
+        const subData = subDoc.data();
+        if (subData && (subData.courseId || subData.id)) {
+          newCourseIds.add(subData.courseId || subData.id);
+          subcollectionCache.push(subData.courseId || subData.id);
+        }
+      });
+      // Store subcollection items to cache specifically
+      localStorage.setItem("tg_enrollments_cache", JSON.stringify(subcollectionCache));
+    } catch (err) {
+      console.warn("No subcollection permissions or not found:", err);
+    }
+
+    // Compare Cached IDs with Network IDs. Only re-render if data actually changed to prevent UI flicker
+    const oldIdsStr = Array.from(enrolledCourseIds).sort().join(',');
+    const newIdsStr = Array.from(newCourseIds).sort().join(',');
+    
+    if (oldIdsStr !== newIdsStr || !hasRenderedFromCache) {
+       enrolledCourseIds = newCourseIds;
+       renderStudyList();
+    }
+
+  } catch (err) {
+    console.error("Error loading user data:", err);
+  }
+}
+
+let initStarted = false;
+
+function startInit(uid) {
+  if (initStarted) return;
+  initStarted = true;
+  loadUserEnrollments(uid);
+}
+
+const storedUid = localStorage.getItem("tg_uid");
+if (storedUid) {
+  startInit(storedUid);
+}
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    localStorage.setItem("tg_uid", user.uid);
+    if (!initStarted) {
+      startInit(user.uid);
+    }
+  } else {
+    if (!storedUid) {
+      startInit(null);
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
